@@ -1,8 +1,15 @@
 output "folder_ids" {
   description = "Map of folder display name to fully-qualified folder ID."
   value = {
-    aw_root      = module.folder_aw_root.id
-    fedramp_high = module.folder_fedramp_high.id
+    aw_root         = module.folder_aw_root.id
+    fedramp_high    = module.folder_fedramp_high.id
+    network         = module.folder_network.id
+    security        = module.folder_security.id
+    core            = module.folder_core.id
+    workloads       = module.folder_workloads.id
+    shared_services = module.folder_shared_services.id
+    workload_a      = module.folder_workload_a.id
+    workload_b      = module.folder_workload_b.id
   }
 }
 
@@ -34,4 +41,22 @@ output "org_policy_ids" {
 output "audit_config_id" {
   description = "Audit config resource ID."
   value       = google_organization_iam_audit_config.org.id
+}
+
+output "core_project_ids" {
+  description = "Map of core project keys to project IDs."
+  value = {
+    iac     = module.project_iac_core.project_id
+    billing = module.project_billing_core.project_id
+    logging = module.project_logging_core.project_id
+  }
+}
+
+output "core_project_numbers" {
+  description = "Map of core project keys to numeric project numbers."
+  value = {
+    iac     = module.project_iac_core.number
+    billing = module.project_billing_core.number
+    logging = module.project_logging_core.number
+  }
 }

@@ -24,6 +24,98 @@ module "folder_fedramp_high" {
   parent = module.folder_aw_root.id
 }
 
+module "folder_network" {
+  source = "./modules/folder"
+
+  name   = "Network"
+  parent = module.folder_fedramp_high.id
+}
+
+module "folder_security" {
+  source = "./modules/folder"
+
+  name   = "Security"
+  parent = module.folder_fedramp_high.id
+}
+
+module "folder_core" {
+  source = "./modules/folder"
+
+  name   = "Core"
+  parent = module.folder_fedramp_high.id
+}
+
+module "folder_workloads" {
+  source = "./modules/folder"
+
+  name   = "Workloads"
+  parent = module.folder_fedramp_high.id
+}
+
+module "folder_shared_services" {
+  source = "./modules/folder"
+
+  name   = "Shared Services"
+  parent = module.folder_fedramp_high.id
+}
+
+module "folder_workload_a" {
+  source = "./modules/folder"
+
+  name   = "workload-a"
+  parent = module.folder_workloads.id
+}
+
+module "folder_workload_b" {
+  source = "./modules/folder"
+
+  name   = "workload-b"
+  parent = module.folder_workloads.id
+}
+
+# ---------------------------------------------------------------------------
+# Core projects
+# ---------------------------------------------------------------------------
+
+module "project_iac_core" {
+  source = "./modules/project"
+
+  name            = "IaC Core"
+  project_id      = "iac-core-0"
+  folder_id       = module.folder_core.id
+  billing_account = var.billing_account
+  labels = {
+    env        = "core"
+    managed-by = "terraform"
+  }
+}
+
+module "project_billing_core" {
+  source = "./modules/project"
+
+  name            = "Billing Core"
+  project_id      = "billing-core-0"
+  folder_id       = module.folder_core.id
+  billing_account = var.billing_account
+  labels = {
+    env        = "core"
+    managed-by = "terraform"
+  }
+}
+
+module "project_logging_core" {
+  source = "./modules/project"
+
+  name            = "Logging Core"
+  project_id      = "logging-core-0"
+  folder_id       = module.folder_core.id
+  billing_account = var.billing_account
+  labels = {
+    env        = "core"
+    managed-by = "terraform"
+  }
+}
+
 # ---------------------------------------------------------------------------
 # Assured Workload — FedRAMP High boundary
 # ---------------------------------------------------------------------------
