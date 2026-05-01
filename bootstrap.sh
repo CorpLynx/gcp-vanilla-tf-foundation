@@ -70,7 +70,17 @@ for ROLE in \
   roles/iam.serviceAccountAdmin \
   roles/orgpolicy.policyAdmin \
   roles/logging.admin \
-  roles/serviceusage.serviceUsageAdmin; do
+  roles/serviceusage.serviceUsageAdmin \
+  roles/assuredworkloads.admin \
+  roles/compute.admin \
+  roles/storage.admin \
+  roles/cloudkms.admin \
+  roles/monitoring.admin \
+  roles/securitycenter.admin \
+  roles/accesscontextmanager.policyAdmin \
+  roles/cloudasset.owner \
+  roles/essentialcontacts.admin \
+  roles/networksecurity.admin; do
   echo "    Granting ${ROLE}"
   gcloud organizations add-iam-policy-binding "${ORG_ID}" \
     --member="serviceAccount:${SA_EMAIL}" \

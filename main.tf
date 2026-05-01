@@ -33,8 +33,11 @@ provider "google" {}
 provider "google-beta" {}
 
 locals {
-  # AW provisions the CONSUMER_FOLDER as resources[0] — extract its ID for use as a project parent
-  aw_folder_id = "folders/${google_assured_workloads_workload.frh.resources[0].resource_id}"
+  # Filter by resource_type to safely get the CONSUMER_FOLDER regardless of index order
+  aw_folder_id = "folders/${[
+    for r in google_assured_workloads_workload.frh.resources :
+    r.resource_id if r.resource_type == "CONSUMER_FOLDER"
+  ][0]}"
 }
 
 # Static top-level folders — stable org structure, named resources
@@ -86,10 +89,10 @@ resource "google_assured_workloads_workload" "frh" {
 }
 
 
-resource "google_project" "iac-core-1" {
-  name       = "iac-core-1"
-  project_id = "iac-core-1"
-  folder_id  = local.aw_folder_id
+resource "google_project" "iac_core_1" {
+  name            = "iac-core-1"
+  project_id      = "iac-core-1"
+  folder_id       = local.aw_folder_id
   billing_account = var.billing_account
 }
 
