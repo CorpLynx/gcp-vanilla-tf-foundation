@@ -37,26 +37,7 @@ provider "google-beta" {
 }
 
 # Static top-level folders — stable org structure, named resources
-resource "google_folder" "fedramp_high" {
-  display_name = "fedramp-high"
-  parent       = "organizations/${var.org.id}"
-}
-
 resource "google_folder" "test" {
   display_name = "test"
   parent       = "organizations/${var.org.id}"
-}
-
-# Static parent folder for workloads — stable, never changes
-resource "google_folder" "workloads" {
-  display_name = "workloads"
-  parent       = "organizations/${var.org.id}"
-}
-
-# Dynamic child folders — driven by var.workload_folders, add/remove entries freely
-resource "google_folder" "workload_folders" {
-  for_each = var.workload_folders
-
-  display_name = each.value.display_name
-  parent       = google_folder.workloads.id
 }
