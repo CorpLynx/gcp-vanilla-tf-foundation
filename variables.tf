@@ -1,17 +1,19 @@
-variable "org_id" {
-  description = "GCP organization numeric ID."
-  type        = string
-  default     = "1041701195417"
+variable "org" {
+  description = "GCP organization identity."
+  type = object({
+    id     = string
+    domain = string
+  })
+  default = {
+    id     = "1041701195417"
+    domain = "gigachadglobal.org"
+  }
 }
 
 variable "billing_account" {
   description = "Billing account ID to associate with projects."
   type        = string
-}
-
-variable "org_domain" {
-  description = "Organization domain (e.g. example.com)."
-  type        = string
+  default     = "014F76-ED4E67-7CCCE1"
 }
 
 variable "iac_sa_email" {
@@ -29,28 +31,40 @@ variable "admin_group_email" {
   type        = string
 }
 
-variable "tfc_organization" {
-  description = "Terraform Cloud / Enterprise organization name."
-  type        = string
-}
-
-variable "tfc_workspace" {
-  description = "Terraform Cloud / Enterprise workspace name."
-  type        = string
-}
-
 variable "log_bucket_name" {
   description = "Destination log bucket resource name for org-level log sinks."
   type        = string
 }
 
-variable "primary_location" {
+variable "region" {
   description = "Primary GCP region. Must be a US region (must start with 'us-') to satisfy FedRAMP High data residency requirements."
   type        = string
-  default     = "us-east4"
+  default     = "us-central1"
 
   validation {
-    condition     = startswith(var.primary_location, "us-")
+    condition     = startswith(var.region, "us-")
     error_message = "primary_location must be a US region (value must start with 'us-'). FedRAMP High requires data residency within the United States."
+  }
+}
+
+variable "workload_folders" {
+  description = "Map of workload folders to create under the workloads parent folder."
+  type = map(object({
+    display_name = string
+    labels       = optional(map(string), {})
+  }))
+  default = {
+    workload_a = {
+      display_name = "workload-a"
+      labels = {
+        managed-by = "terraform"
+      }
+    }
+    workload_b = {
+      display_name = "workload-b"
+      labels = {
+        managed-by = "terraform"
+      }
+    }
   }
 }
