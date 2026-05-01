@@ -89,6 +89,6 @@ resource "google_assured_workloads_workload" "FRH" {
 resource "google_project" "iac-core-1" {
   name       = "iac-core-1"
   project_id = "iac-core-1"
-  folder_id  = google_folder.tld_aw_folder
+  folder_id  = local.aw_folder_id
 }
 
