@@ -48,7 +48,7 @@ resource "google_folder" "tld_aw_folder" {
   parent       = "organizations/${var.org.id}"
 }
 
-resource "google_assured_workloads_workload" "FRH" {
+resource "google_assured_workloads_workload" "frh" {
   compliance_regime = "FEDRAMP_HIGH"
   display_name      = "FedRAMP High Workload"
   location          = var.region
