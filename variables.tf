@@ -53,3 +53,9 @@ default = {
   "compliance-regime" = "frh"
 }
 }
+
+variable "deletion_protection" {
+  description = "set to false to allow deletion, set to true to enforce"
+  type        = bool
+  default     = true
+}

@@ -48,7 +48,7 @@ locals {
 resource "google_folder" "tld_aw_folder" {
   display_name        = "${local.prefix}assured-workloads"
   parent              = "organizations/${var.org.id}"
-  deletion_protection = false
+  deletion_protection = var.deletion_protection
 }
 
 resource "google_assured_workloads_workload" "frh" {
@@ -80,7 +80,7 @@ resource "google_project" "iac_core" {
   project_id      = "${local.prefix}iac-core"
   folder_id       = local.aw_folder_id
   billing_account = var.billing_account
-  deletion_policy = "DELETE"
+  deletion_policy = var.deletion_protection ? "PREVENT" : "DELETE"
 }
 
 resource "google_project" "billing_core" {
@@ -88,7 +88,7 @@ resource "google_project" "billing_core" {
   project_id      = "${local.prefix}billing-core"
   folder_id       = local.aw_folder_id
   billing_account = var.billing_account
-  deletion_policy = "DELETE"
+  deletion_policy = var.deletion_protection ? "PREVENT" : "DELETE"
 }
 
 resource "google_project" "log_core" {
@@ -96,25 +96,29 @@ resource "google_project" "log_core" {
   project_id      = "${local.prefix}log-core"
   folder_id       = local.aw_folder_id
   billing_account = var.billing_account
-  deletion_policy = "DELETE"
+  deletion_policy = var.deletion_protection ? "PREVENT" : "DELETE"
 }
 
 resource "google_folder" "networking" {
-  display_name = "${local.prefix}networking"
-  parent       = local.aw_folder_id
+  display_name        = "${local.prefix}networking"
+  parent              = local.aw_folder_id
+  deletion_protection = var.deletion_protection
 }
 
 resource "google_folder" "security" {
-  display_name = "${local.prefix}security"
-  parent       = local.aw_folder_id
+  display_name        = "${local.prefix}security"
+  parent              = local.aw_folder_id
+  deletion_protection = var.deletion_protection
 }
 
 resource "google_folder" "shared_services" {
-  display_name = "${local.prefix}shared-services"
-  parent       = local.aw_folder_id
+  display_name        = "${local.prefix}shared-services"
+  parent              = local.aw_folder_id
+  deletion_protection = var.deletion_protection
 }
 
 resource "google_folder" "workloads" {
-  display_name = "${local.prefix}workloads"
-  parent       = local.aw_folder_id
+  display_name        = "${local.prefix}workloads"
+  parent              = local.aw_folder_id
+  deletion_protection = var.deletion_protection
 }
