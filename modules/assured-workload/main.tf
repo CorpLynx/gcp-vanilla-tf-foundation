@@ -1,4 +1,4 @@
-resource "google_assured_workloads_workload" "this" {
+resource "google_assured_workloads_workload" "frh" {
   compliance_regime = var.compliance_regime
   display_name      = var.display_name
   location          = var.location

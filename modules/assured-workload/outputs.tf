@@ -4,7 +4,7 @@ output "consumer_folder_id" {
   # edge during destroy — child resources referencing this output will be destroyed
   # before the workload itself.
   value = "folders/${[
-    for r in google_assured_workloads_workload.this.resources :
+    for r in google_assured_workloads_workload.frh.resources :
     r.resource_id if r.resource_type == "CONSUMER_FOLDER"
   ][0]}"
 
