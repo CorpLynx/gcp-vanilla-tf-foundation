@@ -16,12 +16,6 @@ variable "billing_account" {
   default     = "014F76-ED4E67-7CCCE1"
 }
 
-variable "iac_sa_email" {
-  description = "IaC service account email used for provider impersonation."
-  type        = string
-  default = "tf-vanilla-rw@vanilla-bootstrap.iam.gserviceaccount.com"
-}
-
 # variable "iac_project_id" {
 #   description = "GCP project ID that hosts the IaC service accounts (used in org-policy CEL conditions)."
 #   type        = string
