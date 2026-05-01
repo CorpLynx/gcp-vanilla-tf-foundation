@@ -32,8 +32,63 @@ provider "google" {}
 
 provider "google-beta" {}
 
+locals {
+  # AW provisions the CONSUMER_FOLDER as resources[0] — extract its ID for use as a project parent
+  aw_folder_id = "folders/${google_assured_workloads_workload.FRH.resources[0].resource_id}"
+}
+
 # Static top-level folders — stable org structure, named resources
 resource "google_folder" "test" {
   display_name = "test"
   parent       = "organizations/${var.org.id}"
 }
+
+resource "google_folder" "tld_aw_folder" {
+  display_name = "top-level-folder"
+  parent       = "organizations/${var.org.id}"
+}
+
+resource "google_assured_workloads_workload" "FRH" {
+  compliance_regime = "FEDRAMP_HIGH"
+  display_name      = "{{display}}"
+  location          = var.region
+  organization      = var.org.id
+  billing_account   = var.billing_account
+
+  kms_settings {
+    next_rotation_time = "9999-10-02T15:01:23Z"
+    rotation_period    = "10368000s"
+  }
+
+  provisioned_resources_parent = google_folder.tld_aw_folder.id
+
+  resource_settings {
+    display_name  = "FRH-Folder"
+    resource_type = "CONSUMER_FOLDER"
+  }
+
+  # resource_settings {
+  #   resource_type = "ENCRYPTION_KEYS_PROJECT"
+  # }
+
+  # resource_settings {
+  #   resource_id   = "ring"
+  #   resource_type = "KEYRING"
+  # }
+
+  violation_notifications_enabled = true
+
+  # workload_options {
+  #   kaj_enrollment_type = "KEY_ACCESS_TRANSPARENCY_OFF"
+  # }
+
+  labels = var.default_labels
+}
+
+
+resource "google_project" "iac-core-1" {
+  name       = "iac-core-1"
+  project_id = "iac-core-1"
+  folder_id  = google_folder.tld_aw_folder
+}
+

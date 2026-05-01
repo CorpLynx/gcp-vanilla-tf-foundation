@@ -1,12 +1,9 @@
 variable "org" {
-  description = "GCP organization identity."
-  type = object({
-    id     = string
-    domain = string
-  })
+  description = "general organization variables"
+  type = map(string)
   default = {
-    id     = "1041701195417"
     domain = "gigachadglobal.org"
+    id     = "1041701195417"
   }
 }
 
