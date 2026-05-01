@@ -47,7 +47,7 @@ resource "google_folder" "test" {
 }
 
 resource "google_folder" "tld_aw_folder" {
-  display_name = "top-level-folder"
+  display_name = "Assured Workloads"
   parent       = "organizations/${var.org.id}"
 }
 
