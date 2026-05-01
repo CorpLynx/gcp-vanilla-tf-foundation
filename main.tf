@@ -41,10 +41,6 @@ locals {
 }
 
 # Static top-level folders — stable org structure, named resources
-resource "google_folder" "test" {
-  display_name = "test"
-  parent       = "organizations/${var.org.id}"
-}
 
 resource "google_folder" "tld_aw_folder" {
   display_name = "Assured Workloads"
@@ -89,10 +85,46 @@ resource "google_assured_workloads_workload" "frh" {
 }
 
 
-resource "google_project" "iac_core_1" {
+resource "google_project" "vanilla_iac_core" {
   name            = "vanilla-iac-core"
   project_id      = "vanilla-iac-core"
   folder_id       = local.aw_folder_id
   billing_account = var.billing_account
 }
 
+
+resource "google_project" "vanilla_billing_core" {
+  name            = "vanilla-billing-core"
+  project_id      = "vanilla-billing-core"
+  folder_id       = local.aw_folder_id
+  billing_account = var.billing_account
+}
+
+
+resource "google_project" "vanilla_log_core" {
+  name            = "vanilla-log-core"
+  project_id      = "vanilla-log-core"
+  folder_id       = local.aw_folder_id
+  billing_account = var.billing_account
+}
+
+
+resource "google_folder" "networking" {
+  display_name = "Networking"
+  parent = local.aw_folder_id
+}
+
+resource "google_folder" "security" {
+  display_name = "Security"
+  parent = local.aw_folder_id
+}
+
+resource "google_folder" "shared_services" {
+  display_name = "Shared Services"
+  parent = local.aw_folder_id
+}
+
+resource "google_folder" "workloads" {
+  display_name = "Workloads"
+  parent = local.aw_folder_id
+}
