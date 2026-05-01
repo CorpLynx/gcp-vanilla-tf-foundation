@@ -35,50 +35,62 @@ provider "google-beta" {}
 locals {
   # Produces "cl1-" or "" if no prefix is set
   prefix = var.prefix != "" ? "${var.prefix}-" : ""
-
-  # Filter by resource_type to safely get the CONSUMER_FOLDER regardless of index order
-  aw_folder_id = "folders/${[
-    for r in google_assured_workloads_workload.frh.resources :
-    r.resource_id if r.resource_type == "CONSUMER_FOLDER"
-  ][0]}"
 }
 
-# Static top-level folders — stable org structure, named resources
-
+# Top-level folder that contains the AW workload
 resource "google_folder" "tld_aw_folder" {
   display_name        = "${local.prefix}assured-workloads"
   parent              = "organizations/${var.org.id}"
   deletion_protection = var.deletion_protection
 }
 
-resource "google_assured_workloads_workload" "frh" {
-  compliance_regime = "FEDRAMP_HIGH"
-  display_name      = "${local.prefix}fedramp-high"
-  location          = var.region
-  organization      = var.org.id
-  billing_account   = "billingAccounts/${var.billing_account}"
+# Assured Workloads module — outputs consumer_folder_id as a resource reference
+# so Terraform correctly orders destroy (children before workload)
+module "frh" {
+  source = "./modules/assured-workload"
 
-  kms_settings {
-    next_rotation_time = "9999-10-02T15:01:23Z"
-    rotation_period    = "10368000s"
-  }
-
-  provisioned_resources_parent = google_folder.tld_aw_folder.id
-
-  resource_settings {
-    display_name  = "${local.prefix}frh-folder"
-    resource_type = "CONSUMER_FOLDER"
-  }
-
+  compliance_regime               = "FEDRAMP_HIGH"
+  display_name                    = "${local.prefix}fedramp-high"
+  location                        = var.region
+  organization                    = var.org.id
+  billing_account                 = var.billing_account
+  parent_folder_id                = google_folder.tld_aw_folder.id
   violation_notifications_enabled = true
-
-  labels = var.default_labels
+  labels                          = var.default_labels
 }
 
+# Sub-folders inside the AW-managed CONSUMER_FOLDER
+# These reference module.frh.consumer_folder_id — a module output that carries
+# an explicit dependency on the workload resource, fixing destroy ordering.
+resource "google_folder" "networking" {
+  display_name        = "${local.prefix}networking"
+  parent              = module.frh.consumer_folder_id
+  deletion_protection = var.deletion_protection
+}
+
+resource "google_folder" "security" {
+  display_name        = "${local.prefix}security"
+  parent              = module.frh.consumer_folder_id
+  deletion_protection = var.deletion_protection
+}
+
+resource "google_folder" "shared_services" {
+  display_name        = "${local.prefix}shared-services"
+  parent              = module.frh.consumer_folder_id
+  deletion_protection = var.deletion_protection
+}
+
+resource "google_folder" "workloads" {
+  display_name        = "${local.prefix}workloads"
+  parent              = module.frh.consumer_folder_id
+  deletion_protection = var.deletion_protection
+}
+
+# Core projects inside the AW-managed folder
 resource "google_project" "iac_core" {
   name            = "${local.prefix}iac-core"
   project_id      = "${local.prefix}iac-core"
-  folder_id       = local.aw_folder_id
+  folder_id       = module.frh.consumer_folder_id
   billing_account = var.billing_account
   deletion_policy = var.deletion_protection ? "PREVENT" : "DELETE"
 }
@@ -86,7 +98,7 @@ resource "google_project" "iac_core" {
 resource "google_project" "billing_core" {
   name            = "${local.prefix}billing-core"
   project_id      = "${local.prefix}billing-core"
-  folder_id       = local.aw_folder_id
+  folder_id       = module.frh.consumer_folder_id
   billing_account = var.billing_account
   deletion_policy = var.deletion_protection ? "PREVENT" : "DELETE"
 }
@@ -94,31 +106,7 @@ resource "google_project" "billing_core" {
 resource "google_project" "log_core" {
   name            = "${local.prefix}log-core"
   project_id      = "${local.prefix}log-core"
-  folder_id       = local.aw_folder_id
+  folder_id       = module.frh.consumer_folder_id
   billing_account = var.billing_account
   deletion_policy = var.deletion_protection ? "PREVENT" : "DELETE"
-}
-
-resource "google_folder" "networking" {
-  display_name        = "${local.prefix}networking"
-  parent              = local.aw_folder_id
-  deletion_protection = var.deletion_protection
-}
-
-resource "google_folder" "security" {
-  display_name        = "${local.prefix}security"
-  parent              = local.aw_folder_id
-  deletion_protection = var.deletion_protection
-}
-
-resource "google_folder" "shared_services" {
-  display_name        = "${local.prefix}shared-services"
-  parent              = local.aw_folder_id
-  deletion_protection = var.deletion_protection
-}
-
-resource "google_folder" "workloads" {
-  display_name        = "${local.prefix}workloads"
-  parent              = local.aw_folder_id
-  deletion_protection = var.deletion_protection
 }
