@@ -38,3 +38,13 @@ variable "region" {
     error_message = "primary_location must be a US region (value must start with 'us-'). FedRAMP High requires data residency within the United States."
   }
 }
+
+
+variable "default_labels" {
+type = map(string)
+default = {
+  "managed-by"        = "terraform"
+  "owner"             = "myteam"
+  "compliance-regime" = "FRH"
+}
+}
