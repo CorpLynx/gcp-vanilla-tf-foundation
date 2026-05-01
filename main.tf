@@ -28,13 +28,9 @@ terraform {
 }
 
 # Hashicorp recommends putting provider blocks in a dedicated providers.tf file.
-provider "google" {
-  impersonate_service_account = var.iac_sa_email
-}
+provider "google" {}
 
-provider "google-beta" {
-  impersonate_service_account = var.iac_sa_email
-}
+provider "google-beta" {}
 
 # Static top-level folders — stable org structure, named resources
 resource "google_folder" "test" {
