@@ -90,8 +90,8 @@ resource "google_assured_workloads_workload" "frh" {
 
 
 resource "google_project" "iac_core_1" {
-  name            = "iac-core-1"
-  project_id      = "iac-core-1"
+  name            = "vanilla-iac-core"
+  project_id      = "vanilla-iac-core"
   folder_id       = local.aw_folder_id
   billing_account = var.billing_account
 }
