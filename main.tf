@@ -34,7 +34,7 @@ provider "google-beta" {}
 
 locals {
   # AW provisions the CONSUMER_FOLDER as resources[0] — extract its ID for use as a project parent
-  aw_folder_id = "folders/${google_assured_workloads_workload.FRH.resources[0].resource_id}"
+  aw_folder_id = "folders/${google_assured_workloads_workload.frh.resources[0].resource_id}"
 }
 
 # Static top-level folders — stable org structure, named resources
