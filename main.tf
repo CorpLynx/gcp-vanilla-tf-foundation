@@ -50,10 +50,10 @@ resource "google_folder" "tld_aw_folder" {
 
 resource "google_assured_workloads_workload" "FRH" {
   compliance_regime = "FEDRAMP_HIGH"
-  display_name      = "{{display}}"
+  display_name      = "FedRAMP High Workload"
   location          = var.region
   organization      = var.org.id
-  billing_account   = var.billing_account
+  billing_account   = "billingAccounts/${var.billing_account}"
 
   kms_settings {
     next_rotation_time = "9999-10-02T15:01:23Z"
@@ -90,5 +90,6 @@ resource "google_project" "iac-core-1" {
   name       = "iac-core-1"
   project_id = "iac-core-1"
   folder_id  = local.aw_folder_id
+  billing_account = var.billing_account
 }
 

@@ -45,6 +45,6 @@ type = map(string)
 default = {
   "managed-by"        = "terraform"
   "owner"             = "myteam"
-  "compliance-regime" = "FRH"
+  "compliance-regime" = "frh"
 }
 }
