@@ -40,6 +40,11 @@ variable "region" {
 }
 
 
+variable "prefix" {
+  type = string
+  default = "cl1"
+}
+
 variable "default_labels" {
 type = map(string)
 default = {
