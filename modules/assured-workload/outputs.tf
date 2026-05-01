@@ -8,15 +8,15 @@ output "consumer_folder_id" {
     r.resource_id if r.resource_type == "CONSUMER_FOLDER"
   ][0]}"
 
-  depends_on = [google_assured_workloads_workload.this]
+  depends_on = [google_assured_workloads_workload.frh]
 }
 
 output "workload_name" {
   description = "Fully qualified workload resource name."
-  value       = google_assured_workloads_workload.this.name
+  value       = google_assured_workloads_workload.frh.name
 }
 
 output "workload_id" {
   description = "Workload resource ID."
-  value       = google_assured_workloads_workload.this.id
+  value       = google_assured_workloads_workload.frh.id
 }
